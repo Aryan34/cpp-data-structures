@@ -1,17 +1,17 @@
 #include <cassert>
 #include <iostream>
 
-template <typename T>
+template<typename T>
 class Vector {
 private:
-    T *m_arr;
+    T* m_arr;
     unsigned int m_size;
     unsigned int m_capacity;
     void addCapacity();
 public:
     explicit Vector(T fillValue, int s=10);
+    Vector(const Vector& vector);
     ~Vector();
-    Vector(const Vector &vector);
 
     unsigned int size();
     T get(int index);
@@ -24,11 +24,13 @@ public:
     void print();
 };
 
-template <typename T>
+template<typename T>
 void Vector<T>::addCapacity() {
     assert(m_size == m_capacity);
-    unsigned int tmp_capacity = m_capacity % 2 == 1 ? static_cast<unsigned int>(m_capacity * 1.5 + 1) : static_cast<unsigned int>(m_capacity * 1.5);
-    T *tmp_arr = new T[tmp_capacity];
+    unsigned int tmp_capacity =
+            m_capacity % 2 == 1 ? static_cast<unsigned int>(m_capacity * 1.5 + 1) : static_cast<unsigned int>(
+                    m_capacity * 1.5);
+    T* tmp_arr = new T[tmp_capacity];
     for (int i = 0; i < m_capacity; i++) {
         tmp_arr[i] = m_arr[i];
     }
@@ -37,7 +39,7 @@ void Vector<T>::addCapacity() {
     m_capacity = tmp_capacity;
 }
 
-template <typename T>
+template<typename T>
 Vector<T>::Vector(T fillValue, int s) {
     if (s > 0) {
         m_size = s;
@@ -45,18 +47,11 @@ Vector<T>::Vector(T fillValue, int s) {
         m_arr = new T[m_capacity];
         fill(fillValue);
         std::cout << "Constructor called." << std::endl;
-    }
-    else throw ("Size cannot be less than one.");
+    } else throw ("Size cannot be less than one.");
 }
 
-template <typename T>
-Vector<T>::~Vector() {
-    delete[] m_arr;
-    std::cout << "Destructor called." << std::endl;
-}
-
-template <typename T>
-Vector<T>::Vector(const Vector &vector) {
+template<typename T>
+Vector<T>::Vector(const Vector& vector) {
     m_size = vector.m_size;
     m_capacity = vector.m_capacity;
     m_arr = new T[m_capacity];
@@ -65,35 +60,39 @@ Vector<T>::Vector(const Vector &vector) {
     }
 }
 
-template <typename T>
+template<typename T>
+Vector<T>::~Vector() {
+    delete[] m_arr;
+    std::cout << "Destructor called." << std::endl;
+}
+
+template<typename T>
 unsigned int Vector<T>::size() {
     return m_size;
 }
 
-template <typename T>
+template<typename T>
 T Vector<T>::get(int index) {
     if (0 <= index < m_size) {
         return m_arr[index];
-    }
-    else throw "Index out of bounds.";
+    } else throw "Index out of bounds.";
 }
 
-template <typename T>
+template<typename T>
 void Vector<T>::set(int index, T value) {
     if (0 <= index < m_size) {
         m_arr[index] = value;
-    }
-    else throw "Index out of bounds.";
+    } else throw "Index out of bounds.";
 }
 
-template <typename T>
+template<typename T>
 void Vector<T>::fill(T value) {
     for (int i = 0; i < m_size; i++) {
         m_arr[i] = value;
     }
 }
 
-template <typename T>
+template<typename T>
 void Vector<T>::add(T value) {
     if (m_size == m_capacity) {
         addCapacity();
@@ -102,11 +101,11 @@ void Vector<T>::add(T value) {
     m_size++;
 }
 
-template <typename T>
+template<typename T>
 T Vector<T>::pop() {
     if (m_size > 0) {
         T toRet = m_arr[m_size - 1];
-        T *tmp_arr = new T[m_capacity];
+        T* tmp_arr = new T[m_capacity];
         for (int i = 0; i < m_size; i++) {
             tmp_arr[i] = m_arr[i];
         }
@@ -114,17 +113,16 @@ T Vector<T>::pop() {
         m_arr = tmp_arr;
         m_size--;
         return toRet;
-    }
-    else throw "Cannot pop() from empty vector.";
+    } else throw "Cannot pop() from empty vector.";
 }
 
-template <typename T>
+template<typename T>
 void Vector<T>::insert(int index, T value) {
     if (0 <= index <= m_size) {
         if (m_size == m_capacity) {
             addCapacity();
         }
-        T *tmp_arr = new T[m_capacity];
+        T* tmp_arr = new T[m_capacity];
         for (int i = 0; i < m_size + 1; i++) {
             if (i == index) {
                 tmp_arr[i] = value;
@@ -135,14 +133,13 @@ void Vector<T>::insert(int index, T value) {
         delete[] m_arr;
         m_arr = tmp_arr;
         m_size++;
-    }
-    else throw "Index out of bounds.";
+    } else throw "Index out of bounds.";
 }
 
-template <typename T>
+template<typename T>
 void Vector<T>::remove(int index) {
     if (0 <= index < m_size) {
-        T *tmp_arr = new T[m_capacity];
+        T* tmp_arr = new T[m_capacity];
         for (int i = 0; i < m_size - 1; i++) {
             if (i != index) {
                 tmp_arr[i] = i < index ? m_arr[i] : m_arr[i + 1];
@@ -151,11 +148,10 @@ void Vector<T>::remove(int index) {
         delete[] m_arr;
         m_arr = tmp_arr;
         m_size--;
-    }
-    else throw "Index out of bounds.";
+    } else throw "Index out of bounds.";
 }
 
-template <typename T>
+template<typename T>
 void Vector<T>::print() {
     for (int i = 0; i < m_size - 1; i++) {
         std::cout << m_arr[i] << ", ";
