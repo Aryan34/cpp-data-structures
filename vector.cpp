@@ -11,13 +11,14 @@ private:
 public:
     friend void swap(Vector<T>& first, Vector<T>& second);
     ~Vector(); // destructor
-    explicit Vector(T fillValue, int s=10); // constructor
-    Vector(const Vector& vector); // copy constructor
-    Vector<T>& operator=(Vector<T> vector); // copy assignment constructor
+    explicit Vector(int s=10);  // constructor
+    Vector(const Vector& vector);  // copy constructor
+    Vector<T>& operator=(Vector<T> vector);  // copy/move assignment constructor
+    Vector(Vector<T>&& vector) noexcept;  // move constructor
 
+    const Vector<T>& operator[](int index) const;
+    Vector<T>& operator[](int index);
     unsigned int size();
-    T get(int index);
-    void set(int index, T value);
     void fill(T value);
     void add(T value);
     T pop();
@@ -56,9 +57,8 @@ Vector<T>::~Vector() {
 }
 
 template<typename T>
-Vector<T>::Vector(T fillValue, int s) : m_size(s > 0 ? s : throw ("Size cannot be less than one.")), m_capacity(s),
+Vector<T>::Vector(int s) : m_size(s > 0 ? s : throw ("Size cannot be less than one.")), m_capacity(s),
                                         m_arr(new T[s]) {
-    fill(fillValue);
     std::cout << "Constructor called." << std::endl;
 }
 
@@ -72,27 +72,33 @@ Vector<T>::Vector(const Vector &vector) : m_size(vector.m_size), m_capacity(vect
 template<typename T>
 Vector<T>& Vector<T>::operator=(Vector<T> vector) {
     swap(*this, vector);
-    std::cout << "Copy assignment operator called." << std::endl;
+    std::cout << "Copy/Move assignment operator called." << std::endl;
     return *this;
 }
 
 template<typename T>
-unsigned int Vector<T>::size() {
-    return m_size;
+Vector<T>::Vector(Vector<T>&& vector) noexcept : Vector() {
+    swap(*this, vector);
+    std::cout << "Move constructor called." << std::endl;
 }
 
 template<typename T>
-T Vector<T>::get(int index) {
-    if (0 <= index < m_size) {
+const Vector<T>& Vector<T>::operator[](int index) const {
+    if (index >= 0) {
         return m_arr[index];
     } else throw "Index out of bounds.";
 }
 
 template<typename T>
-void Vector<T>::set(int index, T value) {
-    if (0 <= index < m_size) {
-        m_arr[index] = value;
+Vector<T>& Vector<T>::operator[](int index) {
+    if (index >= 0) {
+        return m_arr[index];
     } else throw "Index out of bounds.";
+}
+
+template<typename T>
+unsigned int Vector<T>::size() {
+    return m_size;
 }
 
 template<typename T>
