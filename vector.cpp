@@ -4,9 +4,9 @@
 template<typename T>
 class Vector {
 private:
-    T* m_arr;
     unsigned int m_size;
     unsigned int m_capacity;
+    T* m_arr;
     void addCapacity();
 public:
     explicit Vector(T fillValue, int s=10);
@@ -40,21 +40,15 @@ void Vector<T>::addCapacity() {
 }
 
 template<typename T>
-Vector<T>::Vector(T fillValue, int s) {
-    if (s > 0) {
-        m_size = s;
-        m_capacity = s;
-        m_arr = new T[m_capacity];
-        fill(fillValue);
-        std::cout << "Constructor called." << std::endl;
-    } else throw ("Size cannot be less than one.");
+Vector<T>::Vector(T fillValue, int s) : m_size(s > 0 ? s : throw ("Size cannot be less than one.")), m_capacity(s),
+                                        m_arr(new T[s]) {
+    fill(fillValue);
+    std::cout << "Constructor called." << std::endl;
 }
 
 template<typename T>
-Vector<T>::Vector(const Vector& vector) {
-    m_size = vector.m_size;
-    m_capacity = vector.m_capacity;
-    m_arr = new T[m_capacity];
+Vector<T>::Vector(const Vector &vector) : m_size(vector.m_size), m_capacity(vector.m_capacity),
+                                          m_arr(new T[m_capacity]) {
     for (int i = 0; i < m_capacity; i++) {
         m_arr[i] = vector.m_arr[i];
     }
