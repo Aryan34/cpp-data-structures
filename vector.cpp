@@ -9,9 +9,11 @@ private:
     T* m_arr;
     void addCapacity();
 public:
-    explicit Vector(T fillValue, int s=10);
-    Vector(const Vector& vector);
-    ~Vector();
+    friend void swap(Vector<T>& first, Vector<T>& second);
+    ~Vector(); // destructor
+    explicit Vector(T fillValue, int s=10); // constructor
+    Vector(const Vector& vector); // copy constructor
+    Vector<T>& operator=(Vector<T> vector); // copy assignment constructor
 
     unsigned int size();
     T get(int index);
@@ -40,6 +42,20 @@ void Vector<T>::addCapacity() {
 }
 
 template<typename T>
+void swap(Vector<T>& first, Vector<T>& second) {
+    using std::swap;
+    swap(first.m_size, second.m_size);
+    swap(first.m_capacity, second.m_capacity);
+    swap(first.m_arr, second.m_arr);
+}
+
+template<typename T>
+Vector<T>::~Vector() {
+    delete[] m_arr;
+    std::cout << "Destructor called." << std::endl;
+}
+
+template<typename T>
 Vector<T>::Vector(T fillValue, int s) : m_size(s > 0 ? s : throw ("Size cannot be less than one.")), m_capacity(s),
                                         m_arr(new T[s]) {
     fill(fillValue);
@@ -48,16 +64,16 @@ Vector<T>::Vector(T fillValue, int s) : m_size(s > 0 ? s : throw ("Size cannot b
 
 template<typename T>
 Vector<T>::Vector(const Vector &vector) : m_size(vector.m_size), m_capacity(vector.m_capacity),
-                                          m_arr(new T[m_capacity]) {
-    for (int i = 0; i < m_capacity; i++) {
-        m_arr[i] = vector.m_arr[i];
-    }
+                                          m_arr(new T[vector.m_capacity]) {
+    std::copy(std::begin(vector.m_arr), std::end(vector.m_arr), std::begin(m_arr));
+    std::cout << "Copy constructor called." << std::endl;
 }
 
 template<typename T>
-Vector<T>::~Vector() {
-    delete[] m_arr;
-    std::cout << "Destructor called." << std::endl;
+Vector<T>& Vector<T>::operator=(Vector<T> vector) {
+    swap(*this, vector);
+    std::cout << "Copy assignment operator called." << std::endl;
+    return *this;
 }
 
 template<typename T>
