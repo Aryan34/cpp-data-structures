@@ -86,7 +86,6 @@ void SLL<T>::print() {
     std::cout << curr->value << std::endl;
 }
 
-// adjust head / tail when removing from front or end of ll
 template<typename T>
 void SLL<T>::remove(int index) {
     if (0 <= index < m_size) {
@@ -94,6 +93,9 @@ void SLL<T>::remove(int index) {
         int i = 0;
         Node<T>** curr = &m_head;
         while (i != index) {
+            if (index == m_size && i == index - 1) {
+                m_tail = *curr;
+            }
             curr = &(*curr)->next;
             i++;
         }
@@ -139,14 +141,14 @@ int main ()
     std::vector<int> vec{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
     SLL<int> sll(vec);
     sll.print();
-//    sll.insert(4, 1337);
-//    sll.print();
-//    Node<int>* node = sll.get(4);
-//    std::cout << node->value << std::endl;
-//    sll.set(6, 600);
-//    sll.print();
-//    sll.remove(6);
-//    sll.print();
+    sll.insert(4, 1337);
+    sll.print();
+    Node<int>* node = sll.get(4);
+    std::cout << node->value << std::endl;
+    sll.set(6, 600);
+    sll.print();
+    sll.remove(9);
+    sll.print();
     sll.reverse_iter();
     sll.print();
     return 0;
