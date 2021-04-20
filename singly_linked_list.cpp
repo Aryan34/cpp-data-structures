@@ -63,7 +63,6 @@ Node<T>* SLL<T>::get(int index) {
     } else throw "Index out of bounds";
 }
 
-// adjust head / tail when inserting at front or end of ll
 template<typename T>
 void SLL<T>::insert(int index, T value) {
     if (0 <= index < m_size) {
@@ -71,6 +70,11 @@ void SLL<T>::insert(int index, T value) {
         Node<T>* prev = get(index - 1);
         Node<T>* next = prev->next;
         auto toInsert = new Node<T>{value, nullptr};
+        if (index == 0) {
+            m_head = toInsert;
+        } else if (index == m_size - 1) {
+            m_tail = toInsert;
+        }
         toInsert->next = next;
         prev->next = toInsert;
     } else throw "Index out of bounds";
