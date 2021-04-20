@@ -19,6 +19,8 @@ public:
     void insert(int index, T value);
     void print();
     void remove(int index);
+    void reverse_iter();
+    void reverse_recur();
     void set(int index, T value);
 };
 
@@ -61,6 +63,7 @@ Node<T>* SLL<T>::get(int index) {
     } else throw "Index out of bounds";
 }
 
+// adjust head / tail when inserting at front or end of ll
 template<typename T>
 void SLL<T>::insert(int index, T value) {
     if (0 <= index < m_size) {
@@ -83,9 +86,11 @@ void SLL<T>::print() {
     std::cout << curr->value << std::endl;
 }
 
+// adjust head / tail when removing from front or end of ll
 template<typename T>
 void SLL<T>::remove(int index) {
     if (0 <= index < m_size) {
+        m_size--;
         int i = 0;
         Node<T>** curr = &m_head;
         while (i != index) {
@@ -94,6 +99,26 @@ void SLL<T>::remove(int index) {
         }
         *curr = (*curr)->next;
     } else throw "Index out of bounds";
+}
+
+template<typename T>
+void SLL<T>::reverse_iter() {
+    Node<T>* prev = nullptr;
+    Node<T>* curr = m_head;
+    Node<T>* next;
+    while (prev != m_tail) {
+        next = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = next;
+    }
+    m_tail = m_head;
+    m_head = prev;
+}
+
+template<typename T>
+void SLL<T>::reverse_recur() {
+
 }
 
 template<typename T>
@@ -114,13 +139,15 @@ int main ()
     std::vector<int> vec{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
     SLL<int> sll(vec);
     sll.print();
-    sll.insert(4, 1337);
-    sll.print();
-    Node<int>* node = sll.get(4);
-    std::cout << node->value << std::endl;
-    sll.set(6, 600);
-    sll.print();
-    sll.remove(10);
+//    sll.insert(4, 1337);
+//    sll.print();
+//    Node<int>* node = sll.get(4);
+//    std::cout << node->value << std::endl;
+//    sll.set(6, 600);
+//    sll.print();
+//    sll.remove(6);
+//    sll.print();
+    sll.reverse_iter();
     sll.print();
     return 0;
 }
