@@ -18,6 +18,7 @@ public:
     Node<T>* get(int index);
     void insert(int index, T value);
     void print();
+    void remove(int index);
     void set(int index, T value);
 };
 
@@ -51,32 +52,48 @@ template<typename T>
 Node<T>* SLL<T>::get(int index) {
     if (0 <= index < m_size) {
         int i = 0;
-        Node<T>* tmp = m_head;
+        Node<T>* curr = m_head;
         while (i != index) {
-            tmp = tmp->next;
+            curr = curr->next;
             i++;
         }
-        return tmp;
+        return curr;
     } else throw "Index out of bounds";
 }
 
 template<typename T>
 void SLL<T>::insert(int index, T value) {
-    Node<T>* prev = get(index - 1);
-    Node<T>* next = prev->next;
-    auto toInsert = new Node<T>{value, nullptr};
-    toInsert->next = next;
-    prev->next = toInsert;
+    if (0 <= index < m_size) {
+        m_size++;
+        Node<T>* prev = get(index - 1);
+        Node<T>* next = prev->next;
+        auto toInsert = new Node<T>{value, nullptr};
+        toInsert->next = next;
+        prev->next = toInsert;
+    } else throw "Index out of bounds";
 }
 
 template<typename T>
 void SLL<T>::print() {
-    Node<T>* tmp = m_head;
-    while (tmp->next != nullptr) {
-        std::cout << tmp->value << " ";
-        tmp = tmp->next;
+    Node<T>* curr = m_head;
+    while (curr->next != nullptr) {
+        std::cout << curr->value << " ";
+        curr = curr->next;
     }
-    std::cout << tmp->value << std::endl;
+    std::cout << curr->value << std::endl;
+}
+
+template<typename T>
+void SLL<T>::remove(int index) {
+    if (0 <= index < m_size) {
+        int i = 0;
+        Node<T>** curr = &m_head;
+        while (i != index) {
+            curr = &(*curr)->next;
+            i++;
+        }
+        *curr = (*curr)->next;
+    } else throw "Index out of bounds";
 }
 
 template<typename T>
@@ -102,6 +119,8 @@ int main ()
     Node<int>* node = sll.get(4);
     std::cout << node->value << std::endl;
     sll.set(6, 600);
+    sll.print();
+    sll.remove(10);
     sll.print();
     return 0;
 }
