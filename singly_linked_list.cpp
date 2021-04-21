@@ -21,6 +21,7 @@ public:
     void remove(int index);
     void reverse_iter();
     void reverse_recur();
+    Node<T>* recur_helper(Node<T>* toReverse);
     void set(int index, T value);
 };
 
@@ -124,7 +125,22 @@ void SLL<T>::reverse_iter() {
 
 template<typename T>
 void SLL<T>::reverse_recur() {
+    Node<T>* recur = recur_helper(m_head);
+    Node<T>* tmp = m_head;
+    m_head = m_tail;
+    m_tail = tmp;
+}
 
+template<typename T>
+Node<T>* SLL<T>::recur_helper(Node<T>* toReverse) {
+    if (toReverse->next == nullptr) {
+        return toReverse;
+    }
+
+    Node<T>* recur = recur_helper(toReverse->next);
+    toReverse->next = nullptr;
+    recur->next = toReverse;
+    return toReverse;
 }
 
 template<typename T>
@@ -151,9 +167,9 @@ int main ()
     std::cout << node->value << std::endl;
     sll.set(6, 600);
     sll.print();
-    sll.remove(9);
+    sll.remove(10);
     sll.print();
-    sll.reverse_iter();
+    sll.reverse_recur();
     sll.print();
     return 0;
 }
