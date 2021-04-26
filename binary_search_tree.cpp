@@ -50,17 +50,19 @@ void BST<T>::inorder() {
 
 template<typename T>
 void BST<T>::preorder() {
-
+    std::string traversal = preorder_helper(m_root);
+    std::cout << traversal << std::endl;
 }
 
 template<typename T>
 void BST<T>::postorder() {
-
+    std::string traversal = postorder_helper(m_root);
+    std::cout << traversal << std::endl;
 }
 
 template<typename T>
 std::string BST<T>::inorder_helper(std::shared_ptr<Node<T>> root) {
-    std::string toRet("");
+    std::string toRet;
     if (root->left != nullptr) { toRet.append(inorder_helper(root->left)); }
     toRet.append(std::to_string(root->value) + " ");
     if (root->right != nullptr) { toRet.append(inorder_helper(root->right)); }
@@ -69,12 +71,20 @@ std::string BST<T>::inorder_helper(std::shared_ptr<Node<T>> root) {
 
 template<typename T>
 std::string BST<T>::preorder_helper(std::shared_ptr<Node<T>> root) {
-    return "";
+    std::string toRet;
+    if (root->left != nullptr) { toRet.append(inorder_helper(root->left)); }
+    if (root->right != nullptr) { toRet.append(inorder_helper(root->right)); }
+    toRet.append(std::to_string(root->value) + " ");
+    return toRet;
 }
 
 template<typename T>
 std::string BST<T>::postorder_helper(std::shared_ptr<Node<T>> root) {
-    return "";
+    std::string toRet;
+    toRet.append(std::to_string(root->value) + " ");
+    if (root->left != nullptr) { toRet.append(inorder_helper(root->left)); }
+    if (root->right != nullptr) { toRet.append(inorder_helper(root->right)); }
+    return toRet;
 }
 
 template<typename T>
@@ -140,5 +150,7 @@ int main ()
     std::vector<int> input{1, 9, 4, 5, 6, 3, 2, 8, 7, 0};
     BST<int> bst(input);
     bst.inorder();
+    bst.preorder();
+    bst.postorder();
     return 0;
 }
