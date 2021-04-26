@@ -44,8 +44,8 @@ BST<T>::BST(std::vector<T> &values) {
 
 template<typename T>
 void BST<T>::inorder() {
-
-
+    std::string traversal = inorder_helper(m_root);
+    std::cout << traversal << std::endl;
 }
 
 template<typename T>
@@ -60,7 +60,11 @@ void BST<T>::postorder() {
 
 template<typename T>
 std::string BST<T>::inorder_helper(std::shared_ptr<Node<T>> root) {
-    return "";
+    std::string toRet("");
+    if (root->left != nullptr) { toRet.append(inorder_helper(root->left)); }
+    toRet.append(std::to_string(root->value) + " ");
+    if (root->right != nullptr) { toRet.append(inorder_helper(root->right)); }
+    return toRet;
 }
 
 template<typename T>
@@ -135,5 +139,6 @@ int main ()
 {
     std::vector<int> input{1, 9, 4, 5, 6, 3, 2, 8, 7, 0};
     BST<int> bst(input);
+    bst.inorder();
     return 0;
 }
