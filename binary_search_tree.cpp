@@ -33,10 +33,10 @@ public:
 
 template<typename T>
 BST<T>::BST(std::vector<T> &values) {
-    m_size = values.size();
-    if (m_size != 0) {
+    m_size = 0;
+    if (!values.empty()) {
         m_root = std::make_shared<Node<T>>(Node<T>{values.at(0), nullptr, nullptr, nullptr});
-        for (int i = 1; i < m_size; i++) {
+        for (int i = 1; i < values.size(); i++) {
             insert(values.at(i));
         }
     }
@@ -45,19 +45,19 @@ BST<T>::BST(std::vector<T> &values) {
 template<typename T>
 void BST<T>::inorder() {
     std::string traversal = inorder_helper(m_root);
-    std::cout << traversal << std::endl;
+    std::cout << "Inorder: " + traversal << std::endl;
 }
 
 template<typename T>
 void BST<T>::preorder() {
     std::string traversal = preorder_helper(m_root);
-    std::cout << traversal << std::endl;
+    std::cout << "Preorder: " + traversal << std::endl;
 }
 
 template<typename T>
 void BST<T>::postorder() {
     std::string traversal = postorder_helper(m_root);
-    std::cout << traversal << std::endl;
+    std::cout << "Postorder: " + traversal << std::endl;
 }
 
 template<typename T>
@@ -89,6 +89,7 @@ std::string BST<T>::postorder_helper(std::shared_ptr<Node<T>> root) {
 
 template<typename T>
 void BST<T>::insert(T value) {
+    m_size++;
     if (m_root == nullptr) {
         m_root = std::make_shared<Node<T>>(Node<T>{value, nullptr, nullptr, nullptr});
     } else {
@@ -132,17 +133,25 @@ std::shared_ptr<Node<T>> BST<T>::search(T value) {
 
 template<typename T>
 std::size_t BST<T>::size() {
-    return 0;
+    return m_size;
 }
 
 template<typename T>
 T BST<T>::max() {
-    return nullptr;
+    std::shared_ptr<Node<T>> curr = m_root;
+    while (curr->right != nullptr) {
+        curr = curr->right;
+    }
+    return curr->value;
 }
 
 template<typename T>
 T BST<T>::min() {
-    return nullptr;
+    std::shared_ptr<Node<T>> curr = m_root;
+    while (curr->left != nullptr) {
+        curr = curr->left;
+    }
+    return curr->value;
 }
 
 int main ()
@@ -152,5 +161,6 @@ int main ()
     bst.inorder();
     bst.preorder();
     bst.postorder();
+    std::cout << bst.min() << ", " << bst.max() << std::endl;
     return 0;
 }
