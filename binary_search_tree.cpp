@@ -137,6 +137,45 @@ void BST<T>::insert(T value) {
 
 template<typename T>
 void BST<T>::remove(T value) {
+    if (!m_values.count(value)) {
+        return;
+    }
+    std::shared_ptr<Node<T>> curr = m_root;
+    while (true) {
+        if (value < curr->value && curr->left != nullptr) {
+            curr = curr->left;
+        } else if (value > curr->value && curr->right != nullptr) {
+            curr = curr->right;
+        } else {
+            break;
+        }
+    }
+
+    if (curr->left == nullptr && curr->right == nullptr) {
+        if (curr == curr->parent->left) {
+            curr->parent->left = nullptr;
+        } else { curr->parent->right = nullptr; }
+    } else if (curr->left != nullptr && curr->right == nullptr) {
+        curr->value = curr->left->value;
+        curr->left = nullptr;
+    } else if (curr->left == nullptr && curr->right != nullptr) {
+        curr->value = curr->right->value;
+        curr->right = nullptr;
+    } else {
+        std::vector<T> inorder = this->inorder();
+        std::shared_ptr<Node<T>> successor;
+        for (int i = 0; i < inorder.size(); i++) {
+            if (inorder.at(i) == curr->value) {
+                successor = search(inorder.at(i + 1));
+                break;
+            }
+        }
+        if (successor == nullptr) { throw "Error in code, remove value not found in tree"; }
+        curr->value = successor->value;
+        if (successor == successor->parent->left) {
+            successor->parent->left = nullptr;
+        } else { successor->parent->right = nullptr; }
+    }
 }
 
 template<typename T>
