@@ -1,3 +1,4 @@
+#include <set>
 #include <memory>
 #include <vector>
 #include <iostream>
@@ -14,17 +15,18 @@ template <typename T>
 class BST {
 private:
     std::shared_ptr<Node<T>> m_root;
+    std::set<T> m_values{};
     std::size_t m_size;
 public:
     explicit BST(std::vector<T>& values);
-    void inorder();
-    void preorder();
-    void postorder();
-    std::string inorder_helper(std::shared_ptr<Node<T>> root);
-    std::string preorder_helper(std::shared_ptr<Node<T>> root);
-    std::string postorder_helper(std::shared_ptr<Node<T>> root);
+    std::vector<T> inorder();
+    std::vector<T> preorder();
+    std::vector<T> postorder();
+    std::vector<T> inorder_helper(std::shared_ptr<Node<T>> start);
+    std::vector<T> preorder_helper(std::shared_ptr<Node<T>> start);
+    std::vector<T> postorder_helper(std::shared_ptr<Node<T>> start);
     void insert(T value);
-    std::shared_ptr<Node<T>> remove(T value);
+    void remove(T value);
     std::shared_ptr<Node<T>> search(T value);
     std::size_t size();
     T max();
@@ -36,6 +38,7 @@ BST<T>::BST(std::vector<T> &values) {
     m_size = 0;
     if (!values.empty()) {
         m_root = std::make_shared<Node<T>>(Node<T>{values.at(0), nullptr, nullptr, nullptr});
+        m_values.insert(values.at(0));
         for (int i = 1; i < values.size(); i++) {
             insert(values.at(i));
         }
@@ -43,53 +46,75 @@ BST<T>::BST(std::vector<T> &values) {
 }
 
 template<typename T>
-void BST<T>::inorder() {
-    std::string traversal = inorder_helper(m_root);
-    std::cout << "Inorder: " + traversal << std::endl;
+std::vector<T> BST<T>::inorder() {
+    std::vector<T> traversal = inorder_helper(m_root);
+    return traversal;
 }
 
 template<typename T>
-void BST<T>::preorder() {
-    std::string traversal = preorder_helper(m_root);
-    std::cout << "Preorder: " + traversal << std::endl;
+std::vector<T> BST<T>::preorder() {
+    std::vector<T> traversal = preorder_helper(m_root);
+    return traversal;
 }
 
 template<typename T>
-void BST<T>::postorder() {
-    std::string traversal = postorder_helper(m_root);
-    std::cout << "Postorder: " + traversal << std::endl;
+std::vector<T> BST<T>::postorder() {
+    std::vector<T> traversal = postorder_helper(m_root);
+    return traversal;
 }
 
 template<typename T>
-std::string BST<T>::inorder_helper(std::shared_ptr<Node<T>> root) {
-    std::string toRet;
-    if (root->left != nullptr) { toRet.append(inorder_helper(root->left)); }
-    toRet.append(std::to_string(root->value) + " ");
-    if (root->right != nullptr) { toRet.append(inorder_helper(root->right)); }
+std::vector<T> BST<T>::inorder_helper(std::shared_ptr<Node<T>> start) {
+    std::vector<T> toRet;
+    if (start->left != nullptr) {
+        std::vector<T> tmp = inorder_helper(start->left);
+        toRet.insert(toRet.end(), tmp.begin(), tmp.end());
+    }
+    toRet.push_back(start->value);
+    if (start->right != nullptr) {
+        std::vector<T> tmp = inorder_helper(start->right);
+        toRet.insert(toRet.end(), tmp.begin(), tmp.end());
+    }
     return toRet;
 }
 
 template<typename T>
-std::string BST<T>::preorder_helper(std::shared_ptr<Node<T>> root) {
-    std::string toRet;
-    if (root->left != nullptr) { toRet.append(inorder_helper(root->left)); }
-    if (root->right != nullptr) { toRet.append(inorder_helper(root->right)); }
-    toRet.append(std::to_string(root->value) + " ");
+std::vector<T> BST<T>::preorder_helper(std::shared_ptr<Node<T>> start) {
+    std::vector<T> toRet;
+    if (start->left != nullptr) {
+        std::vector<T> tmp = inorder_helper(start->left);
+        toRet.insert(toRet.end(), tmp.begin(), tmp.end());
+    }
+    if (start->right != nullptr) {
+        std::vector<T> tmp = inorder_helper(start->right);
+        toRet.insert(toRet.end(), tmp.begin(), tmp.end());
+    }
+    toRet.push_back(start->value);
     return toRet;
 }
 
 template<typename T>
-std::string BST<T>::postorder_helper(std::shared_ptr<Node<T>> root) {
-    std::string toRet;
-    toRet.append(std::to_string(root->value) + " ");
-    if (root->left != nullptr) { toRet.append(inorder_helper(root->left)); }
-    if (root->right != nullptr) { toRet.append(inorder_helper(root->right)); }
+std::vector<T> BST<T>::postorder_helper(std::shared_ptr<Node<T>> start) {
+    std::vector<T> toRet;
+    toRet.push_back(start->value);
+    if (start->left != nullptr) {
+        std::vector<T> tmp = inorder_helper(start->left);
+        toRet.insert(toRet.end(), tmp.begin(), tmp.end());
+    }
+    if (start->right != nullptr) {
+        std::vector<T> tmp = inorder_helper(start->right);
+        toRet.insert(toRet.end(), tmp.begin(), tmp.end());
+    }
     return toRet;
 }
 
 template<typename T>
 void BST<T>::insert(T value) {
     m_size++;
+    if (m_values.count(value)) {
+        return;
+    }
+    m_values.insert(value);
     if (m_root == nullptr) {
         m_root = std::make_shared<Node<T>>(Node<T>{value, nullptr, nullptr, nullptr});
     } else {
@@ -111,8 +136,7 @@ void BST<T>::insert(T value) {
 }
 
 template<typename T>
-std::shared_ptr<Node<T>> BST<T>::remove(T value) {
-    return Node<T>();
+void BST<T>::remove(T value) {
 }
 
 template<typename T>
@@ -154,13 +178,22 @@ T BST<T>::min() {
     return curr->value;
 }
 
+template<typename T>
+void printVector(std::vector<T> vec) {
+    for (const auto& i : vec)
+        std::cout << i << ' ';
+    std::cout << std::endl;
+}
+
 int main ()
 {
-    std::vector<int> input{1, 9, 4, 5, 6, 3, 2, 8, 7, 0};
+    std::vector<int> input{1, 4, 5, 6, 3, 9, 2, 8, 7, 0};
     BST<int> bst(input);
-    bst.inorder();
-    bst.preorder();
-    bst.postorder();
+    printVector(bst.inorder());
+    bst.insert(1337);
+    bst.insert(-420);
+    bst.remove(1);
+    printVector(bst.inorder());
     std::cout << bst.min() << ", " << bst.max() << std::endl;
     return 0;
 }
